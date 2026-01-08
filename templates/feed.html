@@ -2,29 +2,32 @@
 
 {% block content %}
 <div class="main-content">
-    <div class="post">
+    <div class="post" style="background: white; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
         <form method="POST" enctype="multipart/form-data">
-            <textarea name="content" placeholder="What's on your mind?" required></textarea>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                <input type="file" name="file" accept="image/*,video/*">
-                <button type="submit">Post</button>
+            <textarea name="content" placeholder="What's on your mind, {{ current_user.username }}?" required style="width: 100%; border: none; outline: none; resize: none; font-family: inherit; font-size: 16px; min-height: 60px;"></textarea>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <input type="file" name="file" accept="image/*,video/*" style="font-size: 12px;">
+                <button type="submit" style="background-color: #ff3856; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;">Post</button>
             </div>
         </form>
     </div>
 
     {% for post in posts %}
-    <div class="post">
+    <div class="post" style="background: white; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd;">
         <div class="post-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 {% set author_user = users | selectattr("username", "equalto", post.author) | first %}
-                <img src="{{ url_for('static', filename='uploads/' + (author_user.profile_pic if author_user.profile_pic else 'default.png')) }}" 
-                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                
+                <img src="{{ url_for('static', filename=author_user.profile_pic) }}" 
+                     style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;"
+                     onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ author_user.username }}&background=random&color=fff';">
                 
                 <div>
-                    <div class="user-with-badge">
+                    <div style="display: flex; align-items: center; gap: 4px;">
                         <a href="{{ url_for('profile', username=post.author) }}" style="text-decoration:none; color:black; font-weight:bold;">{{ post.author }}</a>
                         {% if author_user.is_verified or author_user.username == "Lenny Fisbeck" %}
-                            <span class="verified-badge"><svg viewBox="0 0 15 14"><path d="M2 8.36364L6.23077 12L13 2"></path></svg></span>
+                            <span style="color: #1d9bf0; font-size: 14px;" title="Verified">✔</span>
                         {% endif %}
                     </div>
                     <div style="font-size: 11px; color: #65676b;">{{ post.timestamp | format_datetime }}</div>
@@ -32,46 +35,38 @@
             </div>
 
             {% if post.author == current_user.username or current_user.username == "Lenny Fisbeck" %}
-            <a href="{{ url_for('delete_post', post_id=post.id) }}" onclick="return confirm('Delete this post?')" style="color: #ff3856; text-decoration: none; font-weight: bold; font-size: 18px;">&times;</a>
+            <a href="{{ url_for('delete_post', post_id=post.id) }}" 
+               onclick="return confirm('Delete this post?')" 
+               style="color: #ff3856; text-decoration: none; font-weight: bold; font-size: 18px;">&times;</a>
             {% endif %}
         </div>
 
-        {% if post.content %}<p>{{ post.content }}</p>{% endif %}
+        {% if post.content %}
+            <p style="margin-bottom: 10px; line-height: 1.4; white-space: pre-wrap;">{{ post.content }}</p>
+        {% endif %}
 
         {% if post.file_url %}
-            <div class="post-media">
+            <div class="post-media" style="margin-bottom: 10px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
                 {% if post.file_type == 'image' %}
-                    <img src="{{ url_for('static', filename='uploads/' + post.file_url) }}">
+                    <img src="{{ url_for('static', filename=post.file_url) }}" style="width: 100%; display: block;">
                 {% else %}
-                    <video controls><source src="{{ url_for('static', filename='uploads/' + post.file_url) }}" type="video/mp4"></video>
+                    <video controls style="width: 100%; display: block;">
+                        <source src="{{ url_for('static', filename=post.file_url) }}">
+                    </video>
                 {% endif %}
             </div>
         {% endif %}
 
-        {% set post_likes = likes | selectattr("post_id", "equalto", post.id) | list %}
-        {% set liked_by_me = likes | selectattr("post_id", "equalto", post.id) | selectattr("user", "equalto", current_user.username) | list %}
-        
-        <div style="margin-top: 15px; border-top: 1px solid #f0f2f5; padding-top: 10px;">
-            <a href="{{ url_for('like_post', post_id=post.id) }}" style="text-decoration: none; font-size: 14px; font-weight: bold; color: {{ '#ff3856' if liked_by_me else '#65676b' }};">
-                {{ '❤️' if liked_by_me else '🤍' }} {{ post_likes | length }} Likes
+        <div style="border-top: 1px solid #f0f2f5; padding-top: 10px;">
+            <a href="{{ url_for('like_post', post_id=post.id) }}" style="text-decoration: none; color: #65676b; font-size: 14px; font-weight: bold;">
+                ❤️ {{ (likes | selectattr("post_id", "equalto", post.id) | list) | length }} Likes
             </a>
-        </div>
-
-        <div style="margin-top: 10px; background: #f9f9f9; padding: 10px; border-radius: 8px;">
-            {% for comm in comments if comm.post_id == post.id %}
-                <div style="font-size: 13px; margin-bottom: 4px;">
-                    <strong>{{ comm.user }}:</strong> {{ comm.content }}
-                </div>
-            {% endfor %}
-            <form action="{{ url_for('add_comment', post_id=post.id) }}" method="POST" style="display: flex; gap: 5px; margin-top: 10px;">
-                <input type="text" name="content" placeholder="Write a comment..." required style="flex:1; border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; font-size: 12px;">
-                <button type="submit" style="padding: 4px 10px; font-size: 11px;">Send</button>
-            </form>
         </div>
     </div>
     {% endfor %}
 </div>
 {% endblock %}
+
 
 
 
