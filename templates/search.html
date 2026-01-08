@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-content">
+    <div class="post">
+        <h2 style="margin-top: 0; font-size: 20px;">Find People</h2>
+        <form action="{{ url_for('search') }}" method="GET" style="display: flex; gap: 10px;">
+            <input type="text" name="q" placeholder="Search by username..." value="{{ query }}" required 
+                   style="flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #dddfe2; background: #f0f2f5; outline: none;">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="results">
+        {% if results %}
+            <h3 style="font-size: 14px; color: #65676b; margin-left: 5px; text-transform: uppercase;">Results</h3>
+            {% for item in results %}
+                <div class="post" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div class="user-with-badge">
+                        <div style="display: flex; flex-direction: column;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <a href="{{ url_for('profile', username=item.username) }}" style="text-decoration: none; color: black;">
+                                    {{ item.username }}
+                                </a>
+                                
+                                {% if item.is_verified or item.username == "Lenny Fisbeck" %}
+                                    <span class="verified-badge">
+                                        <svg viewBox="0 0 15 14"><path d="M2 8.36364L6.23077 12L13 2"></path></svg>
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <small style="color: #65676b;">{{ item.bio[:50] }}</small>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('chats_overview', friend_username=item.username) }}" style="text-decoration: none;">
+                        <button style="background: #e4e6eb; color: black; font-size: 13px; padding: 6px 15px;">Message</button>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            {% if query %}
+                <div style="text-align: center; padding: 40px; color: #65676b;">
+                    <p>No users found matching "<strong>{{ query }}</strong>"</p>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+

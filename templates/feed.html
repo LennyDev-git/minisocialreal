@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-content">
+    <div class="post">
+        <form method="POST" enctype="multipart/form-data">
+            <textarea name="content" placeholder="What's on your mind?" required></textarea>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <input type="file" name="file" accept="image/*,video/*">
+                <button type="submit">Post</button>
+            </div>
+        </form>
+    </div>
+
+    {% for post in posts %}
+    <div class="post">
+        <div class="post-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                {% set author_user = users | selectattr("username", "equalto", post.author) | first %}
+                <img src="{{ url_for('static', filename='uploads/' + (author_user.profile_pic if author_user.profile_pic else 'default.png')) }}" 
+                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                
+                <div>
+                    <div class="user-with-badge">
+                        <a href="{{ url_for('profile', username=post.author) }}" style="text-decoration:none; color:black; font-weight:bold;">{{ post.author }}</a>
+                        {% if author_user.is_verified or author_user.username == "Lenny Fisbeck" %}
+                            <span class="verified-badge"><svg viewBox="0 0 15 14"><path d="M2 8.36364L6.23077 12L13 2"></path></svg></span>
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 11px; color: #65676b;">{{ post.timestamp | format_datetime }}</div>
+                </div>
+            </div>
+
+            {% if post.author == current_user.username or current_user.username == "Lenny Fisbeck" %}
+            <a href="{{ url_for('delete_post', post_id=post.id) }}" onclick="return confirm('Delete this post?')" style="color: #ff3856; text-decoration: none; font-weight: bold; font-size: 18px;">&times;</a>
+            {% endif %}
+        </div>
+
+        {% if post.content %}<p>{{ post.content }}</p>{% endif %}
+
+        {% if post.file_url %}
+            <div class="post-media">
+                {% if post.file_type == 'image' %}
+                    <img src="{{ url_for('static', filename='uploads/' + post.file_url) }}">
+                {% else %}
+                    <video controls><source src="{{ url_for('static', filename='uploads/' + post.file_url) }}" type="video/mp4"></video>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% set post_likes = likes | selectattr("post_id", "equalto", post.id) | list %}
+        {% set liked_by_me = likes | selectattr("post_id", "equalto", post.id) | selectattr("user", "equalto", current_user.username) | list %}
+        
+        <div style="margin-top: 15px; border-top: 1px solid #f0f2f5; padding-top: 10px;">
+            <a href="{{ url_for('like_post', post_id=post.id) }}" style="text-decoration: none; font-size: 14px; font-weight: bold; color: {{ '#ff3856' if liked_by_me else '#65676b' }};">
+                {{ '❤️' if liked_by_me else '🤍' }} {{ post_likes | length }} Likes
+            </a>
+        </div>
+
+        <div style="margin-top: 10px; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+            {% for comm in comments if comm.post_id == post.id %}
+                <div style="font-size: 13px; margin-bottom: 4px;">
+                    <strong>{{ comm.user }}:</strong> {{ comm.content }}
+                </div>
+            {% endfor %}
+            <form action="{{ url_for('add_comment', post_id=post.id) }}" method="POST" style="display: flex; gap: 5px; margin-top: 10px;">
+                <input type="text" name="content" placeholder="Write a comment..." required style="flex:1; border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; font-size: 12px;">
+                <button type="submit" style="padding: 4px 10px; font-size: 11px;">Send</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

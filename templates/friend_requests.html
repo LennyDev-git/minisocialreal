@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Friend Requests</h2>
+{% if friend_requests %}
+<ul>
+    {% for fr in friend_requests %}
+    <li>
+        {{ fr.from }}
+        <form method="POST" action="{{ url_for('accept_friend_request', sender=fr.from) }}" style="display:inline;">
+            <button type="submit">Accept</button>
+        </form>
+        <form method="POST" action="{{ url_for('reject_friend_request', sender=fr.from) }}" style="display:inline;">
+            <button type="submit">Reject</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No incoming friend requests.</p>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+

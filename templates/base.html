@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniSocial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="nav-tabs">
+        <div style="display: flex; align-items: center;">
+            <a href="{{ url_for('feed') }}" class="{% if request.endpoint=='feed' %}active{% endif %}">Feed</a>
+            <a href="{{ url_for('chats_overview') }}" class="{% if 'chat' in request.endpoint %}active{% endif %}">Chats</a>
+            <a href="{{ url_for('search') }}" class="{% if request.endpoint=='search' %}active{% endif %}">Search</a>
+        </div>
+        
+        <div style="margin-left:auto; display:flex; align-items:center; gap:15px;">
+            {% if current_user %}
+                <a href="{{ url_for('profile', username=current_user.username) }}" 
+                   style="text-decoration:none; color:#1c1e21; font-weight:600; font-size: 14px; border: 1px solid #ddd; padding: 5px 12px; border-radius: 15px; background: #f0f2f5; display: flex; align-items: center; gap: 8px;">
+                   👤 {{ current_user.username }}
+                </a>
+                <a href="{{ url_for('logout') }}" style="color:#ff3856; font-size:12px; text-decoration:none; font-weight:bold;">Logout</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

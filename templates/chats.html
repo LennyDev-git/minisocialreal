@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 1000px; margin: 20px auto; padding: 0 15px;">
+    <div class="chat-container">
+        <div class="chat-sidebar">
+            <div style="padding:15px; font-weight:bold; border-bottom:1px solid #eee;">Messages</div>
+            {% set partners = [] %}
+            {% for c in chats %}
+                {% set p = c.to if c.from == current_user.username else c.from %}
+                {% if p not in partners %}
+                    {% do partners.append(p) %}
+                    <a href="{{ url_for('chats_overview', friend_username=p) }}" style="display:block; padding:15px; text-decoration:none; color:black; border-bottom:1px solid #fafafa;">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="chat-main">
+            {% if friend %}
+                <div style="padding:15px; border-bottom:1px solid #eee; font-weight:bold;">Chat with {{ friend.username }}</div>
+                <div class="message-list">
+                    {% for m in messages %}
+                        <div class="msg {% if m.from == current_user.username %}mine{% else %}theirs{% endif %}">{{ m.message }}</div>
+                    {% endfor %}
+                </div>
+                <form method="POST" style="padding:15px; display:flex; gap:10px; border-top:1px solid #eee;">
+                    <textarea name="message" placeholder="Type a message..." rows="1" required></textarea>
+                    <button type="submit">Send</button>
+                </form>
+            {% else %}
+                <div style="flex:1; display:flex; align-items:center; justify-content:center; color:#888;">Select a chat to start messaging</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
