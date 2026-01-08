@@ -1,0 +1,30 @@
+{
+    "users": [
+        {
+            "username": "Lenny Fisbeck",
+            "password": "Marcel1994",
+            "bio": "Founder & Lead Developer of MiniSocial. Working to build a better space for everyone to connect. Feel free to reach out for support or feedback! \ud83d\ude80",
+            "profile_pic": "profile_Lenny_Fisbeck.png",
+            "is_verified": true
+        }
+    ],
+    "posts": [
+        {
+            "id": "1767871925.26413",
+            "author": "Lenny Fisbeck",
+            "content": "Greetings from snowy Germany! \u2744\ufe0f\ud83c\udde9\ud83c\uddea No school for me today or tomorrow\u2014the roads are like ice rinks out there. Since I'm stuck inside, I'll be spending the next 48 hours upgrading this website. Stay tuned for new features! \ud83d\udcbb\u2728",
+            "file_url": null,
+            "file_type": null,
+            "timestamp": "2026-01-08T12:32:05.264137"
+        }
+    ],
+    "chats": [],
+    "follows": [],
+    "likes": [
+        {
+            "post_id": "1767871925.26413",
+            "user": "Lenny Fisbeck"
+        }
+    ],
+    "comments": []
+}
