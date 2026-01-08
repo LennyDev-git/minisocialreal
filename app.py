@@ -9,12 +9,12 @@ app.secret_key = "lenny_social_2026_key"
 app.jinja_env.add_extension('jinja2.ext.do')
 
 # Configuration
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'static'  # jetzt direkt in static speichern
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 DATA_FILE = "data.json"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'mov', 'avi'}
 
-# Ensure upload directory exists
+# Ensure static directory exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -227,7 +227,9 @@ def chats_overview(friend_username=None):
     return render_template("chats.html", chats=u_chats, messages=msgs, friend=friend, current_user=user)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
+
+
 
 
 
